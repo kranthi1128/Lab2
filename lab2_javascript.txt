@@ -1,0 +1,41 @@
+$("#DirectionPage").on("pageshow", function (e) {
+    var directionsDisplay;
+    var directionsService = new google.maps.DirectionsService();
+    var map;
+    directionsDisplay = new google.maps.DirectionsRenderer();
+    var center = new google.maps.LatLng(0, 0);
+    var mapOptions = {
+        zoom: 10,
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+        center: center
+    };
+    map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+    directionsDisplay.setMap(map);
+    var start = "Kansas City";
+    var end = "Pine Mountain";
+    var request = {
+        origin: start,
+        destination: end,
+        travelMode: google.maps.DirectionsTravelMode.DRIVING
+    };
+    directionsService.route(request, function (response, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+            directionsDisplay.setDirections(response);
+        }
+    });
+});
+
+$("#WeatherPage").on("pageshow", function (e) {
+    $.ajax({url: 'http://api.wunderground.com/api/36b799dc821d5836/conditions/q/GA/Pine Mountain.json',
+        dataType: "jsonp",
+        success: function (result) {
+            var temp = result.current_observation.temp_f;
+            var icon = result.current_observation.icon_url;
+            var weather = result.current_observation.weather;
+            var currentCondition = "Currently Pine Mountain " + temp + "&deg; F and " + weather;
+            var currentIcon = "<img src='" + icon + "'>";
+            $("#currentConditions").html(currentCondition);
+            $("#currentIcon").html(currentIcon);
+        },
+    }); 
+});
